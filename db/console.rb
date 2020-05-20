@@ -1,6 +1,6 @@
  require('pry')
- require_relative('../models/album')
- require_relative('../models/artist')
+ require_relative('../models/album.rb')
+ require_relative('../models/artist.rb')
 
 # =>  delete all records of albums
 # Album.delete_all()

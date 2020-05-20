@@ -1,11 +1,10 @@
-require('pg')
 require_relative('../db/sql_runner')
+require_relative('./album.rb')
 
 
 class Artist
-
-  attr_accessor :first_name, :last_name
   attr_reader :id
+  attr_accessor :first_name, :last_name
 
   def initialize(options)
     @first_name = options['first_name']
@@ -15,7 +14,7 @@ class Artist
 
   # =>  creating the album id
     def artist()
-      sql = "SELECT * FROM artist WHERE id = $1"
+      sql = "SELECT * FROM albums WHERE artist_id = $1"
       values = [@id]
       results = SqlRunner.run(sql,values)
       artist_data = results[0]
@@ -34,5 +33,11 @@ class Artist
        artist_hash = returned_array[0]
        @id = artist_hash['id'].to_i
      end
+
+     def self.all()
+      sql = "SELECT * FROM artists"
+      artists = SqlRunner.run(sql)
+      return artists.map { |artist| Artist.new(artist)}
+    end
 
 end

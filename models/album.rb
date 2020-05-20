@@ -1,7 +1,5 @@
-require('pg')
 require_relative('../db/sql_runner')
-
-
+require_relative('./artist.rb')
 class Album
 
   attr_accessor :title, :artist, :genre, :artist_id
@@ -17,7 +15,7 @@ class Album
 
 # =>  creating the artist id
   def artist()
-    sql = "SELECT * FROM artist WHERE artist_id = $1"
+    sql = "SELECT * FROM artists WHERE id = $1"
     values = [@artist_id]
     results = SqlRunner.run(sql,values)
     artist_data = results[0]
@@ -26,14 +24,29 @@ class Album
 
 # =>  adding the album into the table
   def save()
-    sql = "INSERT INTO albums (
-    title, artist,genre, artist_id)
+    sql = "INSERT INTO albums(
+      title, artist, genre, artist_id)
     VALUES
-    ( $1, $2, $3, $4)
+    ($1, $2, $3, $4)
      RETURNING id"
      values = [@title, @artist,@genre,@artist_id]
      returned_array = SqlRunner.run(sql,values)
      album_hash = returned_array[0]
      @id = album_hash['id'].to_i
    end
+
+   def self.all()
+      sql = "SELECT * FROM albums"
+      result = SqlRunner.run(sql)
+      return albums.map { |album| Albums.new(album)}
+    end
+
+    def self.find(artist)
+      sql = "SELECT * FROM albums WHERE artist = $2"
+      values = [artist]
+      results = SqlRunner.run(sql,find)
+      artist_hash = results.first
+      artist = Artist.new(artist_hash)
+      return artist
+    end
 end
